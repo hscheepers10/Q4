@@ -9,13 +9,6 @@ package q4_chat;
  *
  * @author User
  */
-public class Q4_Chat {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        
-    }
+public class serverChat {
     
 }
