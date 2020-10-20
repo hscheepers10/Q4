@@ -6,7 +6,11 @@
 
 package q4_chat;
 
+import com.sun.security.ntlm.Client;
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,6 +18,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * @author User
@@ -22,75 +34,133 @@ import javax.swing.JTextField;
 public class clientChat extends JFrame{
     
     //Attributes.  
-    JPanel pane1,pane2,pane3;
-    JLabel servLbl;
-    JButton sSendBtn,sExitBtn;
-    JTextField sTxtf;
-    JTextArea sTxta;
-    Box hba,hb1,hb2,vb1,vb2;
+    JPanel cpane1,cpane2,cpane3;
+    JLabel cservLbl;
+    JButton csendBtn,cexitBtn;
+    JTextField ctxtf;
+    static JTextArea ctxta;
+    Box chba,chb1,chb2,cvb1,cvb2;
+    
+    boolean cclick = false;
+    private String ctxtServer;
+    public static DataInputStream in;
+    public static DataOutputStream out;
+    
+    
     
     //Constructor.  
-    public clientChat(){
-        //Code.  
-        super("Server Chat");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public clientChat() {
+        //JFrame
+        this.setTitle("Client Chat");
         this.setSize(600,380);
+        this.setLocationRelativeTo(null);
         this.setResizable(false);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        //Pane1.  
-        pane1 = new JPanel();
+        //JPaneles 
+        cpane1 = new JPanel();
+        cpane2 = new JPanel();
+        cpane3 = new JPanel(new GridLayout(2,2,5,5));
         
-        servLbl = new JLabel("Client: ");
-        servLbl.setHorizontalAlignment(JLabel.LEFT);
+        //JLabel
+        cservLbl = new JLabel("Client");
+        cservLbl.setHorizontalAlignment(JLabel.LEFT);
         
-        //Vertical Box.  
-        vb1 = Box.createVerticalBox();
-        vb1.add(servLbl);
-        vb1.add(Box.createVerticalStrut(40));
-        vb1.add(hb1);
-        vb1.add(Box.createVerticalStrut(120));
-        vb1.add(hb2);
+        //JTextfields and JTextArea
+        ctxtf = new JTextField(20);
+        ctxta = new JTextArea(12,20);
         
-        vb2 = Box.createVerticalBox();
-        vb2.add(Box.createVerticalStrut(20));
-        vb2.add(hba);
-        vb2.add(Box.createVerticalStrut(20));
+        //JButtons
+        csendBtn = new JButton("Send");
+        csendBtn.addActionListener(new clSend());
         
-        pane1.add(vb1);
+        cexitBtn = new JButton("Exit");
+        cexitBtn.addActionListener(new clExit()); 
         
-        //Pane2.  
-        pane2 = new JPanel();
+        //Box Layout
+        //horisontal boxes
+                
+        chb1 = Box.createHorizontalBox();
+        chb1.add(Box.createHorizontalStrut(5));
+        chb1.add(ctxtf);
+        chb1.add(Box.createHorizontalStrut(5));
+        chb1.add(csendBtn);
         
-        sTxtf = new JTextField(20);
-        sSendBtn = new JButton("Send");
-        sExitBtn = new JButton("Exit");
-        //Exit Onclicklistener.  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        sTxta = new JTextArea(12,20);
+        chb2 = Box.createHorizontalBox();
+        chb2.add(Box.createHorizontalStrut(230));
+        chb2.add(cexitBtn);
+      
+        chba = Box.createHorizontalBox();
+        chba.add(Box.createHorizontalStrut(-5));
+        chba.add(ctxta);
+        chba.add(Box.createHorizontalStrut(10));
         
-        //Horizontal Box.  
-        hb1 = Box.createHorizontalBox();
-        hb1.add(Box.createHorizontalStrut(5));
-        hb1.add(sTxtf);
-        hb1.add(Box.createHorizontalStrut(5));
-        hb1.add(sSendBtn);
+        //vertical boxes
+        cvb1 = Box.createVerticalBox();
+        cvb1.add(cservLbl);
+        cvb1.add(Box.createVerticalStrut(40));
+        cvb1.add(chb1);
+        cvb1.add(Box.createVerticalStrut(120));
+        cvb1.add(chb2);
         
-        hb2 = Box.createHorizontalBox();
-        hb2.add(Box.createHorizontalStrut(230));
-        hb2.add(sExitBtn);
+        cvb2 = Box.createVerticalBox();
+        cvb2.add(Box.createVerticalStrut(20));
+        cvb2.add(chba);
+        cvb2.add(Box.createVerticalStrut(20));
         
-        hba = Box.createHorizontalBox();
-        hba.add(Box.createHorizontalStrut(-5));
-        hba.add(sTxta);
-        hba.add(Box.createHorizontalStrut(10));
+        //adding to panel
         
-        pane2.add(vb2);
+        cpane1.add(cvb1);
+        cpane2.add(cvb2);
         
-        //Pane3.  
-        pane3 = new JPanel(new GridLayout(2,2));
-        
-        
-        
-        
+        //JFrame
+        this.add(cpane3, BorderLayout.NORTH);
+        this.add(cpane1, BorderLayout.WEST);
+        this.add(cpane2, BorderLayout.EAST);
+        this.setVisible(true); 
     }
     
+    //Server send class.  
+    class clSend implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            String sendTxt = ctxtf.getText();
+            String clientTime = new SimpleDateFormat("HH.mm.ss").format(new Date());
+            String sendFor = clientTime+" Client "+sendTxt+"\n";
+            
+            try { 
+                out.writeUTF(sendFor);
+                ctxta.append(sendFor); 
+                ctxtf.setText(null);
+            } 
+            catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            ctxtf.setText(null);         
+        }
+    }
+    
+    //Server Exit class.  
+    class clExit implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            System.exit(0);
+        }
+    }
+    
+    //Main Method for Client side. 
+    public static void main (String[] args){
+        clientChat cli = new clientChat();
+        
+        try {
+             Socket cli1 = new Socket("localhost",9000);
+             in = new DataInputStream(cli1.getInputStream());
+             out = new DataOutputStream(cli1.getOutputStream()); 
+             String ins = (String)in.readUTF();
+             ctxta.append(ins);
+             
+            } catch (IOException ex) {
+             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
 }

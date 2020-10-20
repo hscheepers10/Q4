@@ -10,5 +10,8 @@ package q4_chat;
  * @author User
  */
 public class serverChat {
-    
+        //adding to panel
+        
+        //JFrame
+      
 }
