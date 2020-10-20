@@ -34,15 +34,13 @@ import java.util.logging.Logger;
 public class clientChat extends JFrame{
     
     //Attributes.  
-    JPanel cpane1,cpane2,cpane3;
-    JLabel cservLbl;
-    JButton csendBtn,cexitBtn;
-    JTextField ctxtf;
-    static JTextArea ctxta;
-    Box chba,chb1,chb2,cvb1,cvb2;
+    private final JPanel cpane1,cpane2,cpane3;
+    private final JLabel cservLbl;
+    private final JButton csendBtn,cexitBtn;
+    private final JTextField ctxtf;
+    private static JTextArea ctxta;
+    private final Box chba,chb1,chb2,cvb1,cvb2;
     
-    boolean cclick = false;
-    private String ctxtServer;
     public static DataInputStream in;
     public static DataOutputStream out;
     
@@ -50,7 +48,7 @@ public class clientChat extends JFrame{
     
     //Constructor.  
     public clientChat() {
-        //JFrame
+        //THIS.  
         this.setTitle("Client Chat");
         this.setSize(600,380);
         this.setLocationRelativeTo(null);
@@ -77,9 +75,8 @@ public class clientChat extends JFrame{
         cexitBtn = new JButton("Exit");
         cexitBtn.addActionListener(new clExit()); 
         
-        //Box Layout
-        //horisontal boxes
-                
+        //Box Layout.  
+        //H-boxes.  
         chb1 = Box.createHorizontalBox();
         chb1.add(Box.createHorizontalStrut(5));
         chb1.add(ctxtf);
@@ -95,7 +92,7 @@ public class clientChat extends JFrame{
         chba.add(ctxta);
         chba.add(Box.createHorizontalStrut(10));
         
-        //vertical boxes
+        //vV-boxes.  
         cvb1 = Box.createVerticalBox();
         cvb1.add(cservLbl);
         cvb1.add(Box.createVerticalStrut(40));
@@ -108,19 +105,18 @@ public class clientChat extends JFrame{
         cvb2.add(chba);
         cvb2.add(Box.createVerticalStrut(20));
         
-        //adding to panel
-        
+        //Adding to panels.  
         cpane1.add(cvb1);
         cpane2.add(cvb2);
         
-        //JFrame
+        //THIS.  
         this.add(cpane3, BorderLayout.NORTH);
         this.add(cpane1, BorderLayout.WEST);
         this.add(cpane2, BorderLayout.EAST);
         this.setVisible(true); 
     }
     
-    //Server send class.  
+    //Client send class.  
     class clSend implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -140,7 +136,7 @@ public class clientChat extends JFrame{
         }
     }
     
-    //Server Exit class.  
+    //Client Exit class.  
     class clExit implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent ae) {
