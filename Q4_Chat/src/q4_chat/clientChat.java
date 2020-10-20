@@ -122,7 +122,7 @@ public class clientChat extends JFrame{
         public void actionPerformed(ActionEvent ae) {
             String sendTxt = ctxtf.getText();
             String clientTime = new SimpleDateFormat("HH.mm.ss").format(new Date());
-            String sendFor = clientTime+" Client "+sendTxt+"\n";
+            String sendFor = clientTime+" Client: "+sendTxt+"\n";
             
             try { 
                 out.writeUTF(sendFor);
@@ -136,7 +136,7 @@ public class clientChat extends JFrame{
         }
     }
     
-    //Client Exit class.  
+    //Server Exit class.  
     class clExit implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent ae) {

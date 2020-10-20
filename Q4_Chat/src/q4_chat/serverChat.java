@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package q4_chat;
 
 import com.sun.security.ntlm.Client;
@@ -28,10 +29,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-/**
- *
+/*
  * @author User
  */
+
 public class serverChat extends JFrame{
     
     //Attributes.  
@@ -41,7 +42,7 @@ public class serverChat extends JFrame{
     private final JTextField ctxtf;
     private static JTextArea ctxta;
     private final Box chba,chb1,chb2,cvb1,cvb2;
-    private String txtServer;
+
     private final boolean click = false;
     public static DataInputStream in;
     public static DataOutputStream out;
@@ -50,8 +51,8 @@ public class serverChat extends JFrame{
     
     //Constructor.  
     public serverChat() {
-        //textserver.  
-        txtServer = "";
+        //Textserver.  
+
         
         //THIS.  
         this.setTitle("Server Chat");
@@ -66,7 +67,7 @@ public class serverChat extends JFrame{
         cpane3 = new JPanel(new GridLayout(2,2,5,5));
         
         //JLabel
-        cservLbl = new JLabel("Client");
+        cservLbl = new JLabel("Server");
         cservLbl.setHorizontalAlignment(JLabel.LEFT);
         
         //JTextfields and JTextArea
@@ -127,7 +128,7 @@ public class serverChat extends JFrame{
         public void actionPerformed(ActionEvent ae) {
             String sendTxt = ctxtf.getText();
             String servTime = new SimpleDateFormat("HH.mm.ss").format(new Date());
-            String sendFor = servTime+" Server "+sendTxt+"\n";
+            String sendFor = servTime+" Server: "+sendTxt+"\n";
             
             try { 
                 out.writeUTF(sendFor);
